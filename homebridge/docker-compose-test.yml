@@ -1,0 +1,34 @@
+version: '2'
+services:
+  homebridge-parents:
+    image: homebridge/homebridge:latest
+    restart: always
+    network_mode: host
+    environment:
+      PORT: "8582"
+    volumes:
+      - /docker-volumes/homebridge-parents:/homebridge
+      - type: bind
+        source: ./config-parents.json
+        target: /homebridge/config.json
+      - type: bind
+        source: ./startup.sh
+        target: /homebridge/startup.sh
+      - type: bind
+        source: /home/rsteenbu/shell/ardupi4/control_network_access.py
+        target: /homebridge/control_network_access.py
+    logging:
+      driver: json-file
+      options:
+        max-size: "10mb"
+        max-file: "1"
+
+volumes:
+  homebridge-data:
+      driver: local
+      driver_opts:
+        type: none
+        device: /docker-volumes/homebridge
+        o: bind
+    
+

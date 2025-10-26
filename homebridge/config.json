@@ -1,0 +1,148 @@
+{
+    "bridge": {
+        "name": "Homebridge",
+        "username": "0E:3E:B2:15:EB:CC",
+        "port": 51312,
+        "pin": "205-23-680",
+        "advertiser": "avahi"
+    },
+    "accessories": [
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Hobby Switch",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-hobbyswitch/power?state=on",
+            "offUrl": "http://iot-hobbyswitch/power?state=off",
+            "statusUrl": "http://iot-hobbyswitch/power?state=status"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Backyard LV Lights",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-backyardlight/light?state=on",
+            "offUrl": "http://iot-backyardlight/light?state=off",
+            "statusUrl": "http://iot-backyardlight/light?state=status"
+        },
+        {
+            "accessory": "HTTP-HUMIDITY",
+            "name": "Backyard Humidity",
+            "pullInterval": 5000,
+            "getUrl": "http://iot-backyardlight/sensors?sensor=humidity"
+        },
+        {
+            "accessory": "HttpGarageDoorController",
+            "name": "Garage Door",
+            "doorOperationSeconds": 0,
+            "httpHost": "iot-garagedoor",
+            "httpPort": 80,
+            "httpSsl": false,
+            "httpStatusPollMilliseconds": 4000,
+            "httpRequestTimeoutMilliseconds": 10000,
+            "oauthAuthentication": false,
+            "apiConfig": {
+                "apiType": "Generic",
+                "doorOpenMethod": "GET",
+                "doorOpenUrl": "/door?command=operate",
+                "doorOpenSuccessContent": "OK",
+                "doorCloseMethod": "GET",
+                "doorCloseUrl": "/door?command=operate",
+                "doorCloseSuccessContent": "OK",
+                "doorStateMethod": "GET",
+                "doorStateUrl": "/door?command=status"
+            }
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Patio Pots Irrigation",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-backyardshed/irrigation?zone=patio_pots&state=on",
+            "offUrl": "http://iot-backyardshed/irrigation?zone=patio_pots&state=off",
+            "statusUrl": "http://iot-backyardshed/irrigation?zone=patio_pots&state=status"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Cottage Irrigation",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-backyardshed/irrigation?zone=cottage&state=on",
+            "offUrl": "http://iot-backyardshed/irrigation?zone=cottage&state=off",
+            "statusUrl": "http://iot-backyardshed/irrigation?zone=cottage&state=status"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "South Fence Irrigation",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-backyardshed/irrigation?zone=south_fence&state=on",
+            "offUrl": "http://iot-backyardshed/irrigation?zone=south_fence&state=off",
+            "statusUrl": "http://iot-backyardshed/irrigation?zone=south_fence&state=status"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Hill Irrigation",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-backyardshed/irrigation?zone=hill&state=on",
+            "offUrl": "http://iot-backyardshed/irrigation?zone=hill&state=off",
+            "statusUrl": "http://iot-backyardshed/irrigation?zone=hill&state=status"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Back Fence Irrigation",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-backyardshed/irrigation?zone=back_fence&state=on",
+            "offUrl": "http://iot-backyardshed/irrigation?zone=back_fence&state=off",
+            "statusUrl": "http://iot-backyardshed/irrigation?zone=back_fence&state=status"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "North Fence Irrigation",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-backyardshed/irrigation?zone=north_fence&state=on",
+            "offUrl": "http://iot-backyardshed/irrigation?zone=north_fence&state=off",
+            "statusUrl": "http://iot-backyardshed/irrigation?zone=north_fence&state=status"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Medusa Mister Switch",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-medusa/mister?addTime=10",
+            "offUrl": "http://iot-medusa/mister?state=off",
+            "statusUrl": "http://iot-medusa/mister?state=status"
+        },
+        {
+            "accessory": "CmdTriggerSwitch",
+            "name": "Medusa Mister Add 10s",
+            "stateful": false,
+            "onCmd": "curl http://iot-medusa/mister?addTime=10",
+            "delay": 100,
+            "delayUnit": "ms"
+        }
+    ],
+    "platforms": [
+        {
+            "name": "Config",
+            "port": 8581,
+            "platform": "config",
+	    "log": {
+	      "method": "file",
+	      "path": "/var/log/homebridge.log"
+	    }
+        }
+    ]
+}

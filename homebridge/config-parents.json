@@ -1,0 +1,78 @@
+{
+    "bridge": {
+        "name": "Homebridge Parents",
+        "username": "0E:3E:B2:15:EB:DD",
+        "port": 51313,
+        "pin": "205-23-680",
+        "advertiser": "avahi"
+    },
+    "accessories": [
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Backyard LV Lights",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-backyardlight/light?state=on",
+            "offUrl": "http://iot-backyardlight/light?state=off",
+            "statusUrl": "http://iot-backyardlight/light?state=status"
+        },
+        {
+            "accessory": "HttpGarageDoorController",
+            "name": "Garage Door",
+            "doorOperationSeconds": 0,
+            "httpHost": "iot-garagedoor",
+            "httpPort": 80,
+            "httpSsl": false,
+            "httpStatusPollMilliseconds": 4000,
+            "httpRequestTimeoutMilliseconds": 10000,
+            "oauthAuthentication": false,
+            "apiConfig": {
+                "apiType": "Generic",
+                "doorOpenMethod": "GET",
+                "doorOpenUrl": "/door?command=operate",
+                "doorOpenSuccessContent": "OK",
+                "doorCloseMethod": "GET",
+                "doorCloseUrl": "/door?command=operate",
+                "doorCloseSuccessContent": "OK",
+                "doorStateMethod": "GET",
+                "doorStateUrl": "/door?command=status"
+            }
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Hobby Switch Parents",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-hobbyswitch/power?state=on",
+            "offUrl": "http://iot-hobbyswitch/power?state=off",
+            "statusUrl": "http://iot-hobbyswitch/power?state=status"
+        }
+    ],
+    "platforms": [
+        {
+            "name": "Config",
+            "port": 8582,
+            "platform": "config",
+	    "log": {
+	      "method": "file",
+	      "path": "/var/log/homebridge-parents.log"
+	    }
+        },
+	{
+	  "platform": "cmdSwitch2",
+	  "name": "CMD Switch",
+	  "synchronous": true,
+	  "switches": [
+	    {
+	      "name": "Block PS5",
+	      "on_cmd": "/python-venv/bin/python3 /homebridge/control_network_access.py block_PS5",
+	      "off_cmd": "/python-venv/bin/python3 /homebridge/control_network_access.py allow_PS5",
+	      "state_cmd": "/python-venv/bin/python3 /homebridge/control_network_access.py status_PS5",
+	      "polling": true
+	    }
+	  ]
+	}
+    ]
+}
