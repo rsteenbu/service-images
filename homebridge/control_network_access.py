@@ -3,12 +3,22 @@ import argparse
 import sys
 import os
 
-# The connection to the router
-router = ros_api.Api('mikro-router', user='admin', password=os.environ['MIKRO_PASS'] port=8728)
 # Parse the arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("action", type=str, help="[allow_PS5, block_PS5, status_PS5]")
 parser.add_argument("-d", "--debug", action="store_true", help="Enable debug mode")
+
+# load mikrotik credentials from secrets file
+mikro_creds = {}
+with open("/run/secrets/mikrotik", "r") as f:
+    for line in f:
+        line = line.strip()  # Remove leading/trailing whitespace and newline
+        if line and ":" in line:  # Ensure the line is not empty and contains an '='
+            username, passwd = line.split(":", 1)  # Split only on the first ':'
+
+# The connection to the router
+router = ros_api.Api('mikro-router', username.strip(), passwd.strip(), port=8728)
+
 args = parser.parse_args()
 
 def allow_PS5():
