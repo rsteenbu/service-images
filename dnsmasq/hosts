@@ -1,0 +1,20 @@
+127.0.0.1	localhost
+::1		localhost ip6-localhost ip6-loopback
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters
+
+192.168.1.1	mikro-router
+192.168.1.5	rpi-dns01
+192.168.1.10	macmini
+192.168.1.12	n100d home home.steenburg.net homebridge.steenburg.net ntop.steenburg.net
+
+192.168.1.25	mikro-frontyard
+192.168.1.26	mikro-cottage
+192.168.1.27	mikro-den
+192.168.1.28	mikro-masterbed
+192.168.1.29	mikro-livingroom
+
+192.168.2.20	mikro-switch01
+
+192.168.4.30	ians-ps5-eth0
+192.168.4.31	ians-ps5-wifi

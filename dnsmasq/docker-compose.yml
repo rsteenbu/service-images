@@ -1,0 +1,24 @@
+version: '2'
+services:
+
+services:
+  dnsmasq:
+    image: dockurr/dnsmasq
+    container_name: dnsmasq
+    network_mode: host
+    environment:
+      DNS1: "1.0.0.1"
+      DNS2: "1.1.1.1"
+    cap_add:
+      - NET_ADMIN
+    restart: always
+    logging:
+      driver: syslog
+      options:
+       syslog-address: "tcp://n100d:1514"
+    volumes:
+      - ./dnsmasq.conf:/etc/dnsmasq.conf
+      - ./hosts:/etc/hosts
+      - /var/tftpd:/var/tftpd
+
+
