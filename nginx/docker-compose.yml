@@ -6,7 +6,7 @@ secrets:
 
 services:
   nginx:
-    image: nginx:1.22
+    image: nginx:stable
     network_mode: host
     restart: always
     logging:
