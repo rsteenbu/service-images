@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  grafana:
+    image: grafana/grafana:11.5.2
+    network_mode: host
+    restart: always
+    user: "472"
+    volumes:
+      - /var/lib/grafana:/var/lib/grafana
+      - /etc/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      GF_SERVER_ROOT_URL: https://home.steenburg.net/grafana
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+      GF_AUTH_DISABLE_LOGIN: "false"
+      GF_AUTH_DISABLE_LOGIN_FORM: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_INSTALL_PLUGINS: grafana-image-renderer,grafana-pyroscope-app,grafana-lokiexplore-app
