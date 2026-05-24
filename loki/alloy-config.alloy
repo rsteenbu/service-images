@@ -102,6 +102,20 @@ loki.source.syslog "syslog" {
 
 loki.process "syslog" {
   forward_to = [loki.write.local_loki.receiver]
+
+  stage.match {
+    selector = `{application="dnsmasq"} |~ "dnsmasq-dhcp:"`
+    stage.static_labels {
+      values = { dnsmasq_service = "dhcp" }
+    }
+  }
+
+  stage.match {
+    selector = `{application="dnsmasq"} !~ "dnsmasq-dhcp:"`
+    stage.static_labels {
+      values = { dnsmasq_service = "dns" }
+    }
+  }
 }
 
 loki.relabel "syslog_header_labels" {
