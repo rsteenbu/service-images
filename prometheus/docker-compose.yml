@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.42.0
+    network_mode: host
+    restart: always
+    user: "117"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:514"
+        tag: "prometheus"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /ext/prometheus/data:/ext/prometheus/data
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-admin-api
+      - --log.level=debug
+      - --storage.tsdb.path=/ext/prometheus/data
+      - --storage.tsdb.retention.size=500GB
+      - --enable-feature=remote-write-receiver
