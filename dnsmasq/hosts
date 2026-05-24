@@ -16,5 +16,8 @@ ff02::2		ip6-allrouters
 
 192.168.2.20	mikro-switch01
 
+192.168.4.25	olivias-iphone
+192.168.4.20	ians-macbook
+192.168.4.50	olivias-chromebook
 192.168.4.30	ians-ps5-eth0
 192.168.4.31	ians-ps5-wifi
