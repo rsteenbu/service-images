@@ -1,0 +1,41 @@
+# interfaces(5) file used by ifup(8) and ifdown(8)
+# Include files from /etc/network/interfaces.d:
+source /etc/network/interfaces.d/*
+
+auto eth0
+iface eth0 inet manual
+
+# VLAN 20 - admin
+auto eth0.10
+iface eth0.10 inet static
+    address 192.168.1.5
+    netmask 255.255.255.0
+    vlan-raw-device eth0
+
+# VLAN 20 - admin
+auto eth0.20
+iface eth0.20 inet static
+    address 192.168.2.5
+    netmask 255.255.255.0
+    vlan-raw-device eth0
+
+# VLAN 30 - iot
+auto eth0.30
+iface eth0.30 inet static
+    address 192.168.3.5
+    netmask 255.255.255.0
+    vlan-raw-device eth0
+
+# VLAN 40 - kids
+auto eth0.40
+iface eth0.40 inet static
+    address 192.168.4.5
+    netmask 255.255.255.0
+    vlan-raw-device eth0
+
+# VLAN 50 - guest
+auto eth0.50
+iface eth0.50 inet static
+    address 192.168.5.5
+    netmask 255.255.255.0
+    vlan-raw-device eth0
