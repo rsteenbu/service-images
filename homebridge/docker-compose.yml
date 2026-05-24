@@ -22,7 +22,7 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: "udp://n100d:1514"
+        syslog-address: "udp://n100d:514"
         tag: "homebridge-kids"
 
   homebridge-parents:
@@ -47,7 +47,7 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: "udp://n100d:1514"
+        syslog-address: "udp://n100d:514"
         tag: "homebridge-parents"
 
 volumes:

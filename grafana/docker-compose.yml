@@ -9,7 +9,7 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: "udp://n100d:1514"
+        syslog-address: "udp://n100d:514"
         tag: "grafana"
     volumes:
       - /var/lib/grafana:/var/lib/grafana
@@ -31,7 +31,7 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: "udp://n100d:1514"
+        syslog-address: "udp://n100d:514"
         tag: "grafana-renderer"
     environment:
       ENABLE_METRICS: "true"

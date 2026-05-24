@@ -9,7 +9,7 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: "udp://n100d:1514"
+        syslog-address: "udp://n100d:514"
         tag: "loki"
         mode: non-blocking
     volumes:
@@ -24,7 +24,7 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: "udp://n100d:1514"
+        syslog-address: "udp://n100d:514"
         tag: "alloy"
         mode: non-blocking
     security_opt:
