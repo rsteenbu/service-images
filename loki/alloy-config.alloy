@@ -104,6 +104,13 @@ loki.process "syslog" {
   forward_to = [loki.write.local_loki.receiver]
 
   stage.match {
+    selector = `{application="dnsmasq"}`
+    stage.static_labels {
+      values = { severity = "info" }
+    }
+  }
+
+  stage.match {
     selector = `{application="dnsmasq"} |~ "dnsmasq-dhcp:"`
     stage.static_labels {
       values = { dnsmasq_service = "dhcp" }
