@@ -33,7 +33,7 @@ services:
       - loki
     volumes:
       - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
-      - /etc/alloy/snmp_localbuild.yml:/etc/alloy/snmp_localbuild.yml:ro
+      - ./snmp_localbuild.yml:/etc/alloy/snmp_localbuild.yml:ro
       - /ext/alloy:/ext/alloy
       - /var/log/nginx:/var/log/nginx:ro
       - /proc:/host/proc:ro
