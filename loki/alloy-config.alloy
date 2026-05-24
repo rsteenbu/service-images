@@ -116,6 +116,16 @@ loki.process "syslog" {
       values = { dnsmasq_service = "dns" }
     }
   }
+
+  stage.match {
+    selector = `{dnsmasq_service="dns"} |~ "from \\d"`
+    stage.regex {
+      expression = `from (?P<src_ip>[\d.]+)\s*$`
+    }
+    stage.structured_metadata {
+      values = { src_ip = "" }
+    }
+  }
 }
 
 loki.relabel "syslog_header_labels" {
