@@ -8,7 +8,6 @@ services:
     user: "115"
     volumes:
       - /var/lib/grafana:/var/lib/grafana
-      - /etc/grafana/provisioning:/etc/grafana/provisioning:ro
     environment:
       GF_SERVER_ROOT_URL: https://home.steenburg.net/grafana
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
@@ -16,4 +15,13 @@ services:
       GF_AUTH_DISABLE_LOGIN_FORM: "false"
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
-      GF_INSTALL_PLUGINS: grafana-image-renderer,grafana-pyroscope-app,grafana-lokiexplore-app
+      GF_INSTALL_PLUGINS: grafana-pyroscope-app,grafana-lokiexplore-app
+      GF_RENDERING_SERVER_URL: http://localhost:8081/render
+      GF_RENDERING_CALLBACK_URL: http://localhost:3000/grafana/
+
+  renderer:
+    image: grafana/grafana-image-renderer:latest
+    network_mode: host
+    restart: always
+    environment:
+      ENABLE_METRICS: "true"
