@@ -5,7 +5,7 @@ services:
     image: grafana/grafana:11.5.2
     network_mode: host
     restart: always
-    user: "472"
+    user: "115"
     volumes:
       - /var/lib/grafana:/var/lib/grafana
       - /etc/grafana/provisioning:/etc/grafana/provisioning:ro
