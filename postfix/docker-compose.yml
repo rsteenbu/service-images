@@ -1,0 +1,25 @@
+version: '3.8'
+
+secrets:
+  gmail_password:
+    file: /home/rsteenbu/secrets/gmail-app-password.txt
+
+services:
+  postfix:
+    image: boky/postfix
+    network_mode: host
+    restart: always
+    secrets:
+      - gmail_password
+    environment:
+      HOSTNAME: n100d.steenburg.net
+      RELAYHOST: "[smtp.gmail.com]:587"
+      RELAYHOST_USERNAME: rsteenbu@gmail.com
+      RELAYHOST_PASSWORD_FILE: /run/secrets/gmail_password
+      ALLOWED_SENDER_DOMAINS: steenburg.net
+      POSTFIX_mynetworks: "127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128"
+      POSTFIX_myorigin: steenburg.net
+      POSTFIX_mydestination: "n100d.steenburg.net, steenburg.net, localhost.steenburg.net, localhost"
+      POSTFIX_smtp__tls__security__level: encrypt
+      POSTFIX_mailbox__size__limit: "0"
+      POSTFIX_recipient__delimiter: +
