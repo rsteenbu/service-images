@@ -1,41 +1,31 @@
-#server {
-#    listen 80;
-#    server_name your_domain.com; # Replace with your domain or IP
-#
-#    location ~ /.well-known/acme-challenge {
-#        root /var/www/html;
-#        allow all;
-#    }
-#
-#    location / {
-#        return 301 https://$server_name$request_uri;
-#    }
-#}
-
+# Voron/Mainsail — Authelia auth for external, bypass for internal
 server {
-    server_name voron.steenburg.net; 
+    server_name voron.steenburg.net;
     listen 443 ssl;
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-    auth_basic "Restricted Access"; # Message displayed in the login prompt
-    auth_basic_user_file /run/secrets/nginx_htpasswd;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    include /etc/nginx/snippets/authelia-auth.conf;
+    error_page 401 =302 https://auth.steenburg.net/?rd=$scheme://$http_host$request_uri;
 
     location / {
-        proxy_pass http://voron:80; # Assuming Mainsail runs on port 80 locally
+        auth_request /authelia/authz;
+        proxy_pass http://voron:80;
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    location /websocket { # For Moonraker/websockets
-        proxy_pass http://voron:80/websocket; # Adjust port if needed
+    location /websocket {
+        auth_request /authelia/authz;
+        proxy_pass http://voron:80/websocket;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_read_timeout 86400; # Long timeout for websocket connections
+        proxy_read_timeout 86400;
     }
 }

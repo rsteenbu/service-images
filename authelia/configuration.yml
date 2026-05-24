@@ -1,0 +1,58 @@
+theme: dark
+
+server:
+  address: tcp://0.0.0.0:9091
+
+log:
+  level: warn
+
+totp:
+  issuer: steenburg.net
+
+authentication_backend:
+  password_reset:
+    disable: false
+  file:
+    path: /config/users_database.yml
+    password:
+      algorithm: argon2id
+
+session:
+  name: authelia_session
+  same_site: lax
+  expiration: 12h
+  inactivity: 30m
+  remember_me: 1M
+  cookies:
+    - domain: steenburg.net
+      authelia_url: https://auth.steenburg.net
+      default_redirection_url: https://home.steenburg.net
+
+storage:
+  local:
+    path: /config/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /config/notifications.txt
+
+access_control:
+  default_policy: deny
+  networks:
+    - name: internal
+      networks:
+        - 192.168.0.0/16
+        - 127.0.0.0/8
+  rules:
+    - domain: home.steenburg.net
+      networks:
+        - internal
+      policy: bypass
+    - domain: home.steenburg.net
+      policy: one_factor
+    - domain: voron.steenburg.net
+      networks:
+        - internal
+      policy: bypass
+    - domain: voron.steenburg.net
+      policy: one_factor
