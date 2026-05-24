@@ -9,6 +9,11 @@ services:
     image: boky/postfix
     network_mode: host
     restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:1514"
+        tag: "postfix"
     secrets:
       - gmail_password
     environment:

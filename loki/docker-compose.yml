@@ -6,6 +6,11 @@ services:
     network_mode: host
     restart: always
     user: "120"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:1514"
+        tag: "loki"
     volumes:
       - ./loki-config.yml:/etc/loki/config.yml:ro
       - /ext/loki:/ext/loki
@@ -15,6 +20,11 @@ services:
     image: grafana/alloy:latest
     network_mode: host
     restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:1514"
+        tag: "alloy"
     security_opt:
       - apparmor:unconfined
     depends_on:

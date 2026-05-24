@@ -6,6 +6,11 @@ services:
     network_mode: host
     restart: always
     user: "115"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:1514"
+        tag: "grafana"
     volumes:
       - /var/lib/grafana:/var/lib/grafana
     environment:
@@ -23,5 +28,10 @@ services:
     image: grafana/grafana-image-renderer:latest
     network_mode: host
     restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:1514"
+        tag: "grafana-renderer"
     environment:
       ENABLE_METRICS: "true"

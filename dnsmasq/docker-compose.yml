@@ -15,7 +15,8 @@ services:
     logging:
       driver: syslog
       options:
-       syslog-address: "tcp://n100d:1514"
+        syslog-address: "udp://n100d:1514"
+        tag: "dnsmasq"
     volumes:
       - ./dnsmasq.conf:/etc/dnsmasq.conf
       - ./hosts:/etc/hosts
