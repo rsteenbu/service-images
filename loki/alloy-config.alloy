@@ -1,0 +1,144 @@
+logging {
+  level = "info"
+}
+
+
+// Local OS Metrics
+prometheus.exporter.unix "local_system" {
+  include_exporter_metrics = true
+}
+prometheus.scrape "scrape_metrics" {
+  targets         = prometheus.exporter.unix.local_system.targets
+  forward_to      = [prometheus.remote_write.metrics_service.receiver]
+  scrape_interval = "10s"
+}
+
+// Mikrotik SNMP
+prometheus.exporter.snmp "snmp_service" {
+    config_file = "/etc/alloy/snmp_localbuild.yml"
+
+    target "mikro_router" {
+        address     = "192.168.1.1"
+        module      = "system,if_mib,mikrotik"
+        walk_params = "private"
+        labels      = { "device" = "mikro-router", }
+    }
+
+    target "mikro_switch01" {
+        address     = "192.168.2.20"
+        module      = "system,if_mib,mikrotik"
+        walk_params = "private"
+        labels      = { "device" = "mikro-switch01", }
+    }
+
+    walk_param "private" {
+        retries = "2"
+    }
+    walk_param "public" {
+        retries = "2"
+    }
+}
+prometheus.scrape "scrape_snmp" {
+    targets    = prometheus.exporter.snmp.snmp_service.targets
+    forward_to      = [prometheus.relabel.snmp_relabel.receiver]
+}
+
+prometheus.relabel "snmp_relabel" {
+  forward_to      = [prometheus.remote_write.metrics_service.receiver]
+}
+
+
+prometheus.remote_write "metrics_service" {
+    endpoint {
+        url = "http://localhost:9090/api/v1/write"
+    }
+}
+
+
+// NGINX Logs
+local.file_match "logs" {
+  path_targets = [
+    {__path__ = "/var/log/nginx/*.log"},
+  ]
+}
+loki.source.file "nginx" {
+  targets    = local.file_match.logs.targets
+  forward_to = [loki.process.nginx_logs.receiver]
+}
+loki.process "nginx_logs" {
+  forward_to = [loki.write.local_loki.receiver]
+
+  stage.cri {}
+  stage.json {
+    expressions = {
+      remote_addr = "",
+      time_local = "",
+      server_name = "",
+    }
+  }
+
+  stage.labels {
+    values = {
+      remote_addr = "",
+      time_local = "",
+      server_name = "",
+    }
+  }
+
+}
+
+// Syslog
+loki.source.syslog "syslog" {
+  listener {
+    address = "n100d:1514"
+    label_structured_data = true
+    labels  = { component = "loki.source.syslog", protocol = "tcp"}
+  }
+  relabel_rules = loki.relabel.syslog_header_labels.rules
+  forward_to = [loki.process.syslog.receiver]
+}
+
+loki.process "syslog" {
+  forward_to = [loki.write.local_loki.receiver]
+}
+
+loki.relabel "syslog_header_labels" {
+  forward_to = [loki.write.local_loki.receiver]
+
+  rule {
+    action = "replace"
+    source_labels = ["__syslog_message_hostname"]
+    target_label         = "hostname"
+  }
+  rule {
+    action = "replace"
+    source_labels = ["__syslog_message_severity"]
+    target_label         = "severity"
+  }
+  rule {
+    action = "replace"
+    source_labels = ["__syslog_message_facility"]
+    target_label         = "facility"
+  }
+  rule {
+    action = "replace"
+    source_labels = ["__syslog_message_app_name"]
+    target_label         = "application"
+  }
+  rule {
+    action = "replace"
+    source_labels = ["__syslog_connection_hostname"]
+    target_label         = "connection_hostname"
+  }
+  rule {
+    action = "replace"
+    source_labels = ["__syslog_message_msg"]
+    target_label         = "message"
+  }
+}
+
+loki.write "local_loki" {
+    endpoint {
+        url = "http://localhost:3100/loki/api/v1/push"
+    }
+}
