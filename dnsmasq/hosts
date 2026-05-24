@@ -6,7 +6,8 @@ ff02::2		ip6-allrouters
 192.168.1.1	mikro-router
 192.168.1.5	rpi-dns01
 192.168.1.10	macmini
-192.168.1.12	n100d home home.steenburg.net homebridge.steenburg.net ntop.steenburg.net
+192.168.1.12	n100d home home.steenburg.net auth.steenburg.net homebridge.steenburg.net ntop.steenburg.net
+192.168.1.35	voron
 
 192.168.1.25	mikro-frontyard
 192.168.1.26	mikro-cottage
