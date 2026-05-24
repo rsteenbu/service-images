@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    network_mode: host
+    restart: always
+    user: "123"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:514"
+        tag: "mongodb"
+    volumes:
+      - ./mongod.conf:/etc/mongod.conf:ro
+      - /var/lib/mongodb:/var/lib/mongodb
+    entrypoint: mongod
+    command: --config /etc/mongod.conf
