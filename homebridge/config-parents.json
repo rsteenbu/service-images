@@ -118,6 +118,16 @@
             "onUrl": "http://iot-backyardshed/irrigation?zone=north_fence&state=on",
             "offUrl": "http://iot-backyardshed/irrigation?zone=north_fence&state=off",
             "statusUrl": "http://iot-backyardshed/irrigation?zone=north_fence&state=status"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Medusa Mister Switch",
+            "switchType": "stateful",
+            "statusCache": 0,
+            "pullInterval": 1000,
+            "onUrl": "http://iot-medusa/mister?addTime=10",
+            "offUrl": "http://iot-medusa/mister?state=off",
+            "statusUrl": "http://iot-medusa/mister?state=status"
         }
     ],
     "platforms": [
@@ -141,6 +151,10 @@
 	      "off_cmd": "/python-venv/bin/python3 /homebridge/control_network_access.py allow_PS5",
 	      "state_cmd": "/python-venv/bin/python3 /homebridge/control_network_access.py status_PS5",
 	      "polling": true
+	    },
+	    {
+	      "name": "Medusa +10s Mister",
+              "onCmd": "curl http://iot-medusa/mister?addTime=10"
 	    }
 	  ]
 	}

@@ -38,24 +38,6 @@
             "onUrl": "http://iot-backyardlight/light?state=on",
             "offUrl": "http://iot-backyardlight/light?state=off",
             "statusUrl": "http://iot-backyardlight/light?state=status"
-        },
-        {
-            "accessory": "HTTP-SWITCH",
-            "name": "Medusa Mister Switch",
-            "switchType": "stateful",
-            "statusCache": 0,
-            "pullInterval": 1000,
-            "onUrl": "http://iot-medusa/mister?addTime=10",
-            "offUrl": "http://iot-medusa/mister?state=off",
-            "statusUrl": "http://iot-medusa/mister?state=status"
-        },
-        {
-            "accessory": "CmdTriggerSwitch",
-            "name": "Medusa Mister Add 10s",
-            "stateful": false,
-            "onCmd": "curl http://iot-medusa/mister?addTime=10",
-            "delay": 100,
-            "delayUnit": "ms"
         }
     ],
     "platforms": [
