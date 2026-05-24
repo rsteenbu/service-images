@@ -6,6 +6,8 @@ logging {
 // Local OS Metrics
 prometheus.exporter.unix "local_system" {
   include_exporter_metrics = true
+  procfs_path              = "/host/proc"
+  sysfs_path               = "/host/sys"
 }
 prometheus.scrape "scrape_metrics" {
   targets         = prometheus.exporter.unix.local_system.targets
@@ -134,6 +136,11 @@ loki.relabel "syslog_header_labels" {
     action = "replace"
     source_labels = ["__syslog_message_msg"]
     target_label         = "message"
+  }
+  rule {
+    action = "replace"
+    source_labels = ["__syslog_message_tag"]
+    target_label         = "tag"
   }
 }
 

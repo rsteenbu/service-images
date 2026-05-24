@@ -5,6 +5,7 @@ services:
     image: grafana/loki:latest
     network_mode: host
     restart: always
+    user: "120"
     volumes:
       - ./loki-config.yml:/etc/loki/config.yml:ro
       - /ext/loki:/ext/loki
@@ -21,6 +22,6 @@ services:
       - /etc/alloy/snmp_localbuild.yml:/etc/alloy/snmp_localbuild.yml:ro
       - /ext/alloy:/ext/alloy
       - /var/log/nginx:/var/log/nginx:ro
-      - /proc:/proc:ro
-      - /sys:/sys:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
     command: run /etc/alloy/config.alloy --storage.path=/ext/alloy
