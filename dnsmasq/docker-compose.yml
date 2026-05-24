@@ -17,6 +17,7 @@ services:
       options:
         syslog-address: "udp://n100d:514"
         tag: "dnsmasq"
+        syslog-level: "info"
     volumes:
       - ./dnsmasq.conf:/etc/dnsmasq.conf
       - ./hosts:/etc/hosts
