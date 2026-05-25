@@ -1,0 +1,8 @@
+users:
+  rsteenbu:
+    disabled: false
+    displayname: Richard Steenburg
+    # Generate hash: docker run --rm authelia/authelia:latest authelia crypto hash generate argon2
+    password: CHANGEME  # real file lives in /home/rsteenbu/secrets/authelia-users.yml
+    email: rsteenbu@gmail.com
+    groups: []

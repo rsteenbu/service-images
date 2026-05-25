@@ -1,0 +1,32 @@
+version: '3.8'
+
+secrets:
+  authelia_jwt_secret:
+    file: /home/rsteenbu/secrets/authelia-jwt-secret
+  authelia_session_secret:
+    file: /home/rsteenbu/secrets/authelia-session-secret
+  authelia_storage_secret:
+    file: /home/rsteenbu/secrets/authelia-storage-secret
+
+services:
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    network_mode: host
+    restart: always
+    volumes:
+      - ./:/config
+      - /home/rsteenbu/secrets/authelia-users.yml:/config/users_database.yml
+    secrets:
+      - authelia_jwt_secret
+      - authelia_session_secret
+      - authelia_storage_secret
+    environment:
+      AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
+      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_secret
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:514"
+        tag: "authelia"
