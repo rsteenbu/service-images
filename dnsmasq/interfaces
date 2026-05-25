@@ -11,6 +11,7 @@ iface eth0.10 inet static
     address 192.168.1.5
     netmask 255.255.255.0
     vlan-raw-device eth0
+    gateway 192.168.1.1
 
 # VLAN 20 - admin
 auto eth0.20
