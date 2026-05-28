@@ -1,7 +1,5 @@
 version: '2'
 services:
-
-services:
   dnsmasq:
     image: dockurr/dnsmasq
     container_name: dnsmasq
@@ -12,6 +10,12 @@ services:
     cap_add:
       - NET_ADMIN
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "nslookup home.steenburg.net 127.0.0.1 > /dev/null 2>&1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     logging:
       driver: syslog
       options:
