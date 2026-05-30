@@ -45,8 +45,6 @@ server {
     location / {
         allow 192.168.0.0/16;
         deny all;
-        auth_basic "Restricted Access";
-        auth_basic_user_file /run/secrets/nginx_htpasswd;
         proxy_set_header Host localhost;
         proxy_pass http://n100d:4000;
     }
