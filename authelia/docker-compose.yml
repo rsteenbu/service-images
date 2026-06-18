@@ -16,7 +16,8 @@ services:
     restart: always
     volumes:
       - ./:/config
-      - /home/rsteenbu/secrets/authelia-users.yml:/config/users_database.yml
+      - ./configuration.yml:/config/configuration.yml:ro
+      - /home/rsteenbu/secrets/authelia-users.yml:/config/users_database.yml:ro
     secrets:
       - authelia_jwt_secret
       - authelia_session_secret

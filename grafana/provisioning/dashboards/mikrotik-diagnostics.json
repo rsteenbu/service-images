@@ -1,0 +1,737 @@
+{
+  "title": "Mikrotik Network Diagnostics",
+  "uid": "mikrotik-diag-v1",
+  "timezone": "browser",
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "version": 1,
+  "tags": [
+    "mikrotik",
+    "network"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "device",
+        "label": "Device",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "admcgbr6g84cgf"
+        },
+        "query": {
+          "query": "label_values(up{job=~\"integrations/snmp/mikro.*\"}, device)",
+          "refId": "A"
+        },
+        "multi": true,
+        "includeAll": true,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 2,
+        "sort": 1
+      },
+      {
+        "name": "interface",
+        "label": "Interface",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "admcgbr6g84cgf"
+        },
+        "query": {
+          "query": "label_values(ifHCInOctets{job=~\"integrations/snmp/mikro.*\",device=~\"$device\"}, ifName)",
+          "refId": "A"
+        },
+        "multi": true,
+        "includeAll": true,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 2,
+        "sort": 1
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Overview",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Device Status",
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 18,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "orientation": "horizontal"
+      },
+      "targets": [
+        {
+          "expr": "up{job=~\"integrations/snmp/mikro.*\"}",
+          "legendFormat": "{{device}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Total WiFi Clients",
+      "gridPos": {
+        "x": 18,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "expr": "count(mtxrWifiRegistrationSignal{job=~\"integrations/snmp/mikro.*\"})",
+          "legendFormat": "clients",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "row",
+      "title": "Hardware Health",
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "CPU Utilization",
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 8,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "avg by (device) (hrProcessorLoad{job=~\"integrations/snmp/mikro.*\",device=~\"$device\"})",
+          "legendFormat": "{{device}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Memory Usage",
+      "gridPos": {
+        "x": 8,
+        "y": 6,
+        "w": 8,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "100 * hrStorageUsed{hrStorageDescr=\"main memory\",job=~\"integrations/snmp/mikro.*\",device=~\"$device\"} / hrStorageSize{hrStorageDescr=\"main memory\",job=~\"integrations/snmp/mikro.*\",device=~\"$device\"}",
+          "legendFormat": "{{device}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Temperature",
+      "gridPos": {
+        "x": 16,
+        "y": 6,
+        "w": 8,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "mtxrHlTemperature{job=~\"integrations/snmp/mikro.*\",device=~\"$device\"} / 10",
+          "legendFormat": "{{device}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "row",
+      "title": "Traffic",
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Interface RX Traffic",
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(ifHCInOctets{job=~\"integrations/snmp/mikro.*\",device=~\"$device\",ifName=~\"$interface\"}[5m]) * 8",
+          "legendFormat": "{{device}} {{ifName}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Interface TX Traffic",
+      "gridPos": {
+        "x": 12,
+        "y": 15,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(ifHCOutOctets{job=~\"integrations/snmp/mikro.*\",device=~\"$device\",ifName=~\"$interface\"}[5m]) * 8",
+          "legendFormat": "{{device}} {{ifName}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "row",
+      "title": "Errors & Stability",
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "Interface Errors",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "pps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(ifInErrors{job=~\"integrations/snmp/mikro.*\",device=~\"$device\",ifName=~\"ether.*|sfp.*\"}[5m])",
+          "legendFormat": "{{device}} {{ifName}} RX",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        },
+        {
+          "expr": "rate(ifOutErrors{job=~\"integrations/snmp/mikro.*\",device=~\"$device\",ifName=~\"ether.*|sfp.*\"}[5m])",
+          "legendFormat": "{{device}} {{ifName}} TX",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Interface Discards",
+      "gridPos": {
+        "x": 8,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "pps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(ifInDiscards{job=~\"integrations/snmp/mikro.*\",device=~\"$device\",ifName=~\"ether.*|sfp.*\"}[5m])",
+          "legendFormat": "{{device}} {{ifName}} RX",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        },
+        {
+          "expr": "rate(ifOutDiscards{job=~\"integrations/snmp/mikro.*\",device=~\"$device\",ifName=~\"ether.*|sfp.*\"}[5m])",
+          "legendFormat": "{{device}} {{ifName}} TX",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "type": "table",
+      "title": "Link Flaps (time range)",
+      "gridPos": {
+        "x": 16,
+        "y": 24,
+        "w": 8,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "sortBy": [
+          {
+            "displayName": "Value",
+            "desc": true
+          }
+        ]
+      },
+      "targets": [
+        {
+          "expr": "increase(mtxrInterfaceStatsLinkDowns{job=~\"integrations/snmp/mikro.*\",device=~\"$device\"}[$__range]) > 0",
+          "legendFormat": "{{device}} {{ifName}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "type": "timeseries",
+      "title": "FCS Errors",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "pps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(mtxrInterfaceStatsRxFCSError{job=~\"integrations/snmp/mikro.*\",device=~\"$device\",ifName=~\"ether.*|sfp.*\"}[5m])",
+          "legendFormat": "{{device}} {{ifName}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "row",
+      "title": "WiFi",
+      "gridPos": {
+        "x": 0,
+        "y": 41,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 16,
+      "type": "timeseries",
+      "title": "WiFi Clients per Device",
+      "gridPos": {
+        "x": 0,
+        "y": 42,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "count by (device) (mtxrWifiRegistrationSignal{job=~\"integrations/snmp/mikro.*\",device=~\"$device\"})",
+          "legendFormat": "{{device}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "type": "timeseries",
+      "title": "WiFi Signal Strength",
+      "gridPos": {
+        "x": 12,
+        "y": 42,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dBm"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "mtxrWifiRegistrationSignal{job=~\"integrations/snmp/mikro.*\",device=~\"$device\"}",
+          "legendFormat": "{{device}} {{mtxrWifiRegistrationMacAddress}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "type": "timeseries",
+      "title": "WiFi Noise Floor",
+      "gridPos": {
+        "x": 0,
+        "y": 50,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dBm"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "mtxrWlApNoiseFloor{job=~\"integrations/snmp/mikro.*\",device=~\"$device\"}",
+          "legendFormat": "{{device}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "type": "timeseries",
+      "title": "WiFi Overall TX CCQ",
+      "gridPos": {
+        "x": 12,
+        "y": 50,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "admcgbr6g84cgf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "expr": "mtxrWlApOverallTxCCQ{job=~\"integrations/snmp/mikro.*\",device=~\"$device\"}",
+          "legendFormat": "{{device}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "admcgbr6g84cgf"
+          }
+        }
+      ]
+    }
+  ],
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {}
+}

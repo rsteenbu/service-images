@@ -13,6 +13,7 @@ services:
         tag: "grafana"
     volumes:
       - /var/lib/grafana:/var/lib/grafana
+      - ./provisioning:/etc/grafana/provisioning
     environment:
       GF_SERVER_ROOT_URL: https://home.steenburg.net/grafana
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
