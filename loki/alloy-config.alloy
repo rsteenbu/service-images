@@ -21,16 +21,51 @@ prometheus.exporter.snmp "snmp_service" {
 
     target "mikro_router" {
         address     = "192.168.1.1"
-        module      = "system,if_mib,mikrotik"
+        module      = "system,if_mib,mikrotik,hrDevice,hrStorage"
         walk_params = "private"
         labels      = { "device" = "mikro-router", }
     }
 
     target "mikro_switch01" {
         address     = "192.168.2.20"
-        module      = "system,if_mib,mikrotik"
+        module      = "system,if_mib,mikrotik,hrDevice,hrStorage"
         walk_params = "private"
         labels      = { "device" = "mikro-switch01", }
+    }
+
+    target "mikro_cottage" {
+        address     = "192.168.1.26"
+        module      = "system,if_mib,mikrotik,hrDevice,hrStorage"
+        walk_params = "private"
+        labels      = { "device" = "mikro-cottage", }
+    }
+
+    target "mikro_frontyard" {
+        address     = "192.168.1.25"
+        module      = "system,if_mib,mikrotik,hrDevice,hrStorage"
+        walk_params = "private"
+        labels      = { "device" = "mikro-frontyard", }
+    }
+
+    target "mikro_den" {
+        address     = "192.168.1.27"
+        module      = "system,if_mib,mikrotik,hrDevice,hrStorage"
+        walk_params = "private"
+        labels      = { "device" = "mikro-den", }
+    }
+
+    target "mikro_masterbed" {
+        address     = "192.168.1.28"
+        module      = "system,if_mib,mikrotik,hrDevice,hrStorage"
+        walk_params = "private"
+        labels      = { "device" = "mikro-masterbed", }
+    }
+
+    target "mikro_livingroom" {
+        address     = "192.168.1.29"
+        module      = "system,if_mib,mikrotik,hrDevice,hrStorage"
+        walk_params = "private"
+        labels      = { "device" = "mikro-livingroom", }
     }
 
     walk_param "private" {
