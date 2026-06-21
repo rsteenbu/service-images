@@ -24,3 +24,5 @@ ff02::2		ip6-allrouters
 192.168.4.50	olivias-chromebook
 192.168.4.30	ians-ps5-eth0
 192.168.4.31	ians-ps5-wifi
+
+192.168.1.131	lutron-blinds
