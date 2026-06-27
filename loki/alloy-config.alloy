@@ -11,8 +11,23 @@ prometheus.exporter.unix "local_system" {
 }
 prometheus.scrape "scrape_metrics" {
   targets         = prometheus.exporter.unix.local_system.targets
-  forward_to      = [prometheus.remote_write.metrics_service.receiver]
+  forward_to      = [prometheus.relabel.node.receiver]
   scrape_interval = "10s"
+  job_name        = "integrations/node_exporter"
+}
+
+prometheus.relabel "node" {
+  forward_to = [prometheus.remote_write.metrics_service.receiver]
+
+  rule {
+    target_label = "job"
+    replacement  = "integrations/node_exporter"
+  }
+
+  rule {
+    target_label = "hostname"
+    replacement  = constants.hostname
+  }
 }
 
 // Mikrotik SNMP
@@ -81,7 +96,12 @@ prometheus.scrape "scrape_snmp" {
 }
 
 prometheus.relabel "snmp_relabel" {
-  forward_to      = [prometheus.remote_write.metrics_service.receiver]
+  forward_to = [prometheus.remote_write.metrics_service.receiver]
+
+  rule {
+    target_label = "hostname"
+    replacement  = constants.hostname
+  }
 }
 
 

@@ -1,0 +1,58 @@
+// ============ LOGS ============
+
+loki.source.journal "system" {
+  forward_to = [loki.relabel.journal.receiver]
+  labels = {
+    hostname = constants.hostname,
+  }
+}
+
+loki.relabel "journal" {
+  forward_to = [loki.write.default.receiver]
+
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+  rule {
+    source_labels = ["__journal_syslog_identifier"]
+    target_label  = "application"
+  }
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://LOKI_HOST:3100/loki/api/v1/push"
+  }
+}
+
+// ============ METRICS ============
+
+prometheus.exporter.unix "node" {}
+
+prometheus.scrape "node" {
+  targets         = prometheus.exporter.unix.node.targets
+  forward_to      = [prometheus.relabel.node.receiver]
+  scrape_interval = "60s"
+  job_name        = "integrations/node_exporter"
+}
+
+prometheus.relabel "node" {
+  forward_to = [prometheus.remote_write.default.receiver]
+
+  rule {
+    target_label = "job"
+    replacement  = "integrations/node_exporter"
+  }
+
+  rule {
+    target_label = "hostname"
+    replacement  = constants.hostname
+  }
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://PROMETHEUS_HOST:9090/api/v1/write"
+  }
+}
