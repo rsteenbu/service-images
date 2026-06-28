@@ -1,0 +1,16 @@
+services:
+  sftp:
+    image: atmoz/sftp
+    container_name: sftp
+    ports:
+      - "2222:22"
+    volumes:
+      - /home/ftp-files:/home/ftp-files/upload
+      - ./sshd_config:/etc/ssh/sshd_config:ro
+    command: "ftp-files:$$6$$XdCt3APz/0GGY4ev$$A8BZyCUrGxkIB1s6evJZk9IJFb2kc52rU9x7qG5Sbk7UfC5VfDu4C0lbNYp/IcNMsRyF68mkVNUhzemlyf8YI/:e:1001:1001:upload"
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:514"
+        tag: "sftp"
