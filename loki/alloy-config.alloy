@@ -144,6 +144,16 @@ loki.process "nginx_logs" {
 
 }
 
+// Docker Events
+loki.source.journal "docker_events" {
+  matches   = "_SYSTEMD_UNIT=docker-events.service"
+  forward_to = [loki.write.local_loki.receiver]
+  labels = {
+    hostname    = constants.hostname,
+    application = "docker",
+  }
+}
+
 // Syslog
 loki.source.syslog "syslog" {
   listener {
