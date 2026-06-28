@@ -17,10 +17,10 @@ services:
       retries: 3
       start_period: 10s
     logging:
-      driver: json-file
+      driver: syslog
       options:
-        max-size: "10m"
-        max-file: "3"
+        syslog-address: "udp://n100d:514"
+        tag: "dnsmasq"
     volumes:
       - ./dnsmasq.conf:/etc/dnsmasq.conf
       - ./hosts:/etc/hosts
