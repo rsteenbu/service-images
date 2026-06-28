@@ -1,6 +1,6 @@
 # Grafana Alloy
 
-Ships systemd journal logs to Loki and OS metrics to Prometheus from any Debian/Raspbian host.
+Ships systemd journal logs and Docker container logs to Loki, and OS metrics to Prometheus from any Debian/Raspbian host.
 
 ## Fresh install
 
@@ -22,6 +22,13 @@ The script will:
 3. Write `/etc/alloy/config.alloy` with the provided hostnames
 4. Add the `alloy` user to the `systemd-journal` group for journal access
 5. Enable and start the `alloy` systemd service
+
+To also collect Docker container logs, add `alloy` to the `docker` group and restart:
+
+```bash
+sudo usermod -aG docker alloy
+sudo systemctl restart alloy
+```
 
 ## Verify
 

@@ -21,8 +21,9 @@ sed \
   -e "s/PROMETHEUS_HOST/${PROMETHEUS_HOST}/g" \
   "$(dirname "$0")/config.alloy" | sudo tee /etc/alloy/config.alloy > /dev/null
 
-# Grant journal access
+# Grant journal and docker access
 sudo usermod -aG systemd-journal alloy
+sudo usermod -aG docker alloy
 
 sudo systemctl enable alloy
 sudo systemctl restart alloy
