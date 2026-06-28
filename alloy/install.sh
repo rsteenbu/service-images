@@ -28,5 +28,12 @@ sudo usermod -aG docker alloy
 sudo systemctl enable alloy
 sudo systemctl restart alloy
 
+# Deploy Docker events logger service
+sudo cp "$(dirname "$0")/docker-events.service" /etc/systemd/system/docker-events.service
+sudo systemctl daemon-reload
+sudo systemctl enable docker-events
+sudo systemctl restart docker-events
+
 echo "Alloy installed and started."
 echo "Verify with: sudo journalctl -u alloy -f"
+echo "Docker events: sudo journalctl -u docker-events -f"

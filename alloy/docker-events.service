@@ -1,0 +1,12 @@
+[Unit]
+Description=Docker Events Logger
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/docker events --format "{{json .}}"
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
