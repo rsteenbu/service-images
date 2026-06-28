@@ -6,8 +6,6 @@ logging {
 // Local OS Metrics
 prometheus.exporter.unix "local_system" {
   include_exporter_metrics = true
-  procfs_path              = "/host/proc"
-  sysfs_path               = "/host/sys"
 }
 prometheus.scrape "scrape_metrics" {
   targets         = prometheus.exporter.unix.local_system.targets
