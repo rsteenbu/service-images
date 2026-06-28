@@ -76,7 +76,7 @@ See `mikrotik-backup-script.rsc` for the full updated script to paste into **Sys
 
 ## Disabling vsftpd
 
-Once SFTP backups are confirmed working across all devices:
+Once all devices are migrated to SFTP:
 
 ```bash
 sudo systemctl stop vsftpd
