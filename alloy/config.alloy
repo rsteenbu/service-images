@@ -27,6 +27,11 @@ discovery.relabel "docker_logs" {
     source_labels = ["__meta_docker_compose_project"]
     target_label  = "compose_project"
   }
+
+  rule {
+    target_label = "hostname"
+    replacement  = constants.hostname
+  }
 }
 
 loki.source.docker "containers" {
