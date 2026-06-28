@@ -25,5 +25,6 @@ services:
       - ./dnsmasq.conf:/etc/dnsmasq.conf
       - ./hosts:/etc/hosts
       - /var/tftpd:/var/tftpd
+      - ./dnsmasq.leases:/var/lib/misc/dnsmasq.leases
 
 
