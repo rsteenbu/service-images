@@ -6,6 +6,8 @@ logging {
 // Local OS Metrics
 prometheus.exporter.unix "local_system" {
   include_exporter_metrics = true
+  procfs_path              = "/host/proc"
+  sysfs_path               = "/host/sys"
 }
 prometheus.scrape "scrape_metrics" {
   targets         = prometheus.exporter.unix.local_system.targets
@@ -105,7 +107,7 @@ prometheus.relabel "snmp_relabel" {
 
 prometheus.remote_write "metrics_service" {
     endpoint {
-        url = "http://PROMETHEUS_HOST:9090/api/v1/write"
+        url = "http://localhost:9090/api/v1/write"
     }
 }
 
@@ -298,6 +300,6 @@ loki.relabel "syslog_header_labels" {
 
 loki.write "local_loki" {
     endpoint {
-        url = "http://LOKI_HOST:3100/loki/api/v1/push"
+        url = "http://localhost:3100/loki/api/v1/push"
     }
 }

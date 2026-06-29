@@ -13,14 +13,14 @@ Grafana Loki log aggregation service for n100d. Receives logs from:
 
 ## Bootstrap
 
-### 1. Create storage directory
+### 1. Create storage directories
 
 ```bash
-sudo mkdir -p /ext/loki
+sudo mkdir -p /ext/loki /ext/alloy
 sudo chown 120:120 /ext/loki
 ```
 
-UID 120 is the `loki` user inside the container.
+UID 120 is the `loki` user inside the container. `/ext/alloy` is Alloy's WAL storage and can be owned by root.
 
 ### 2. Configure rsyslog
 
@@ -56,14 +56,13 @@ cd ~/service-images/loki
 docker compose up -d
 ```
 
-### 4. Install Alloy
+### 4. Start Loki and Alloy
 
-Alloy runs bare-metal on n100d. See [`alloy/README.md`](../alloy/README.md) for full instructions.
+Alloy runs as a container in this compose project alongside Loki.
 
 ```bash
-cd ~/service-images
-sudo cp loki/snmp_localbuild.yml /etc/alloy/snmp_localbuild.yml
-./alloy/install.sh n100d n100d loki/alloy-config.alloy
+cd ~/service-images/loki
+docker compose up -d
 ```
 
 ## Verify

@@ -16,3 +16,29 @@ services:
       - ./loki-config.yml:/etc/loki/config.yml:ro
       - /ext/loki:/ext/loki
     command: -config.file=/etc/loki/config.yml
+
+  alloy:
+    image: grafana/alloy:latest
+    network_mode: host
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:514"
+        tag: "alloy"
+        mode: non-blocking
+    security_opt:
+      - apparmor:unconfined
+    depends_on:
+      - loki
+    volumes:
+      - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
+      - ./snmp_localbuild.yml:/etc/alloy/snmp_localbuild.yml:ro
+      - /ext/alloy:/ext/alloy
+      - /var/log/nginx:/var/log/nginx:ro
+      - /var/log/iot.log:/var/log/iot.log:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /run/log/journal:/run/log/journal:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: run /etc/alloy/config.alloy --storage.path=/ext/alloy
