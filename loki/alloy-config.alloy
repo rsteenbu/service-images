@@ -105,10 +105,68 @@ prometheus.relabel "snmp_relabel" {
 
 prometheus.remote_write "metrics_service" {
     endpoint {
-        url = "http://localhost:9090/api/v1/write"
+        url = "http://PROMETHEUS_HOST:9090/api/v1/write"
     }
 }
 
+
+// Journal Logs
+loki.source.journal "system" {
+  forward_to    = [loki.write.local_loki.receiver]
+  relabel_rules = loki.relabel.journal.rules
+  labels = {
+    hostname = constants.hostname,
+  }
+}
+
+loki.relabel "journal" {
+  forward_to = [loki.write.local_loki.receiver]
+
+  rule {
+    source_labels = ["__journal_systemd_unit"]
+    target_label  = "unit"
+  }
+  rule {
+    source_labels = ["__journal_syslog_identifier"]
+    target_label  = "application"
+  }
+  rule {
+    source_labels = ["__journal_systemd_unit"]
+    regex         = "docker-events.service"
+    action        = "drop"
+  }
+}
+
+// IoT Device Logs
+local.file_match "iot_logs" {
+  path_targets = [
+    {__path__ = "/var/log/iot.log"},
+  ]
+}
+
+loki.source.file "iot" {
+  targets    = local.file_match.iot_logs.targets
+  forward_to = [loki.process.iot_logs.receiver]
+}
+
+loki.process "iot_logs" {
+  forward_to = [loki.write.local_loki.receiver]
+
+  stage.static_labels {
+    values = { job = "iot" }
+  }
+
+  stage.regex {
+    expression = `^\w+ +\d+ +[\d:]+ +(?P<hostname>\S+) +(?P<application>\S+)`
+  }
+
+  stage.labels {
+    values = {
+      hostname    = "",
+      application = "",
+    }
+  }
+}
 
 // NGINX Logs
 local.file_match "logs" {
@@ -240,6 +298,6 @@ loki.relabel "syslog_header_labels" {
 
 loki.write "local_loki" {
     endpoint {
-        url = "http://localhost:3100/loki/api/v1/push"
+        url = "http://LOKI_HOST:3100/loki/api/v1/push"
     }
 }
