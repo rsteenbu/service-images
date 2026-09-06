@@ -11,7 +11,10 @@ Bare-metal Alloy agent for shipping logs and metrics to Loki and Prometheus. Run
 
 ## Install — simple host (e.g. rpi-dns01)
 
+For any new non-containerized host, clone the repo and run `install.sh`:
+
 ```bash
+git clone <repo> ~/service-images
 cd ~/service-images
 ./alloy/install.sh <loki_host> <prometheus_host>
 ```
@@ -21,6 +24,8 @@ Example:
 ```bash
 ./alloy/install.sh n100d n100d
 ```
+
+Docker is not required. If Docker isn't installed, `install.sh` skips the `docker` group and `docker-events.service` steps automatically. If the host *will* run containers, install Docker first (see [Docker install](https://docs.docker.com/engine/install/)) so Alloy can join the `docker` group and the events collector can start.
 
 ## Install — n100d
 
@@ -42,9 +47,9 @@ cd loki && docker compose up -d
 
 1. Adds the Grafana APT repository and installs `alloy`
 2. Writes `/etc/alloy/config.alloy` from the specified config file, substituting `LOKI_HOST` and `PROMETHEUS_HOST`
-3. Adds the `alloy` user to `systemd-journal` and `docker` groups
+3. Adds the `alloy` user to the `systemd-journal` group (always) and the `docker` group (only if Docker is installed)
 4. Enables and starts the `alloy` systemd service
-5. Installs `docker-events.service`, enables and starts it
+5. If Docker is installed, installs `docker-events.service` and enables/starts it; otherwise skipped
 
 ## docker-events service
 
