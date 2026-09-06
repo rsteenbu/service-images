@@ -1,0 +1,83 @@
+// ============ LOGS ============
+
+loki.source.journal "system" {
+  forward_to    = [loki.write.default.receiver]
+  relabel_rules = loki.relabel.journal.rules
+  labels = {
+    hostname = constants.hostname,
+  }
+}
+
+loki.relabel "journal" {
+  forward_to = [loki.write.default.receiver]
+
+  rule {
+    source_labels = ["__journal_systemd_unit"]
+    target_label  = "unit"
+  }
+  rule {
+    source_labels = ["__journal_syslog_identifier"]
+    target_label  = "application"
+  }
+}
+
+// Klippy log — tailed directly (Klipper runs bare-metal, not containerized)
+local.file_match "klippy" {
+  path_targets = [
+    {__path__ = "/home/rsteenbu/printer_data/logs/klippy.log"},
+  ]
+}
+
+loki.source.file "klippy" {
+  targets    = local.file_match.klippy.targets
+  forward_to = [loki.process.klippy.receiver]
+}
+
+loki.process "klippy" {
+  forward_to = [loki.write.default.receiver]
+
+  stage.static_labels {
+    values = {
+      job         = "klipper",
+      application = "klippy",
+      hostname    = constants.hostname,
+    }
+  }
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://LOKI_HOST:3100/loki/api/v1/push"
+  }
+}
+
+// ============ METRICS ============
+
+prometheus.exporter.unix "node" {}
+
+prometheus.scrape "node" {
+  targets         = prometheus.exporter.unix.node.targets
+  forward_to      = [prometheus.relabel.node.receiver]
+  scrape_interval = "60s"
+  job_name        = "integrations/node_exporter"
+}
+
+prometheus.relabel "node" {
+  forward_to = [prometheus.remote_write.default.receiver]
+
+  rule {
+    target_label = "job"
+    replacement  = "integrations/node_exporter"
+  }
+
+  rule {
+    target_label = "hostname"
+    replacement  = constants.hostname
+  }
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://PROMETHEUS_HOST:9090/api/v1/write"
+  }
+}
