@@ -17,6 +17,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --web.enable-admin-api
+      - --web.enable-lifecycle
       - --log.level=debug
       - --storage.tsdb.path=/ext/prometheus/data
       - --storage.tsdb.retention.size=500GB

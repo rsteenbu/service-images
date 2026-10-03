@@ -35,7 +35,6 @@ services:
       - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
       - ./snmp_localbuild.yml:/etc/alloy/snmp_localbuild.yml:ro
       - /ext/alloy:/ext/alloy
-      - /var/log/nginx:/var/log/nginx:ro
       - /var/log/iot.log:/var/log/iot.log:ro
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro

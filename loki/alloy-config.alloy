@@ -170,38 +170,6 @@ loki.process "iot_logs" {
   }
 }
 
-// NGINX Logs
-local.file_match "logs" {
-  path_targets = [
-    {__path__ = "/var/log/nginx/*.log"},
-  ]
-}
-loki.source.file "nginx" {
-  targets    = local.file_match.logs.targets
-  forward_to = [loki.process.nginx_logs.receiver]
-}
-loki.process "nginx_logs" {
-  forward_to = [loki.write.local_loki.receiver]
-
-  stage.cri {}
-  stage.json {
-    expressions = {
-      remote_addr = "",
-      time_local = "",
-      server_name = "",
-    }
-  }
-
-  stage.labels {
-    values = {
-      remote_addr = "",
-      time_local = "",
-      server_name = "",
-    }
-  }
-
-}
-
 // Docker Events
 loki.source.journal "docker_events" {
   matches   = "_SYSTEMD_UNIT=docker-events.service"
@@ -254,6 +222,16 @@ loki.process "syslog" {
     }
     stage.structured_metadata {
       values = { src_ip = "" }
+    }
+  }
+
+  stage.match {
+    selector = `{application="nginx"} |~ "^\\{"`
+    stage.json {
+      expressions = { server_name = "" }
+    }
+    stage.labels {
+      values = { server_name = "" }
     }
   }
 }

@@ -21,4 +21,3 @@ services:
       - ./sites-enabled:/etc/nginx/sites-enabled:ro
       - ./snippets:/etc/nginx/snippets:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /var/log/nginx:/var/log/nginx
