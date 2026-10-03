@@ -19,13 +19,11 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: "udp://n100d:1514"
+        syslog-address: "tcp://n100d:1514"
         syslog-format: "rfc5424"
         tag: "dnsmasq"
     volumes:
       - ./dnsmasq.conf:/etc/dnsmasq.conf
+      - ./dnsmasq.leases:/var/lib/misc/dnsmasq.leases
       - ./hosts:/etc/hosts
       - /var/tftpd:/var/tftpd
-      - ./dnsmasq.leases:/var/lib/misc/dnsmasq.leases
-
-
