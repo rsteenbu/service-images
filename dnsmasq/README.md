@@ -51,19 +51,23 @@ hostnames list in one place; `dnsmasq` serves it via `expand-hosts`):
 192.168.1.12  n100d home home.steenburg.net ... foo.steenburg.net
 ```
 
-**2. `dnsmasq.conf`** — add an `address=` line in the "Resolve steenburg.net
-subdomains" block (around line 719):
+**2. `dnsmasq.conf`** — add TWO lines in the "Resolve steenburg.net subdomains"
+block (around line 722). The `address=` gives the A record; the `local=` tells
+dnsmasq to be fully authoritative for that name:
 
 ```
 address=/foo.steenburg.net/192.168.1.12
+local=/foo.steenburg.net/
 ```
 
-**Why both?** The `hosts` entry alone makes dnsmasq answer the A record, but it
-will *also* forward the query upstream and return the external CNAME chain
-alongside — which is what breaks clients. The `address=/` directive makes
-dnsmasq authoritative for that name and stops the upstream forward. The `hosts`
-entry keeps the human-readable inventory intact; `address=/` is the one doing
-the real work.
+**Why both lines?** `address=/` alone only handles A queries — dnsmasq will
+still forward CNAME, AAAA, etc. queries upstream and return whatever's there.
+Clients then follow the external CNAME chain and leave the LAN. `local=/` tells
+dnsmasq "I'm authoritative for this name, never forward any query type for it"
+— so other types return NXDOMAIN and the A record wins cleanly. Omitting
+`local=/` is the exact bug that caused `budget.steenburg.net` to leak out to
+the public IP from Mac clients. The `hosts` entry is just for the readable
+inventory of names on `192.168.1.12`.
 
 ### Deploy
 

@@ -1,0 +1,25 @@
+# Actual Budget — Authelia auth for external, bypass for internal
+server {
+    server_name budget.steenburg.net;
+    listen 443 ssl;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    include /etc/nginx/snippets/authelia-auth.conf;
+    error_page 401 =302 https://auth.steenburg.net/?rd=$scheme://$http_host$request_uri;
+
+    client_max_body_size 20M;
+
+    location / {
+        auth_request /authelia/authz;
+        proxy_pass http://localhost:5006;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400;
+    }
+}

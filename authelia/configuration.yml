@@ -56,3 +56,9 @@ access_control:
       policy: bypass
     - domain: voron.steenburg.net
       policy: one_factor
+    - domain: budget.steenburg.net
+      networks:
+        - internal
+      policy: bypass
+    - domain: budget.steenburg.net
+      policy: one_factor
