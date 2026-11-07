@@ -74,7 +74,7 @@ inventory of names on `192.168.1.12`.
 ```
 # from this directory, on your workstation:
 scp hosts dnsmasq.conf rpi-dns01:/path/to/dnsmasq/   # adjust path to deployment layout
-ssh rpi-dns01 'sudo docker compose -f /path/to/dnsmasq/docker-compose.yml restart'
+ssh rpi-dns01 'sudo docker-compose -f /path/to/dnsmasq/docker-compose.yml restart'
 ```
 
 ### Verify

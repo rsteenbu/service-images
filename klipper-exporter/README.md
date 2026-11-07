@@ -11,17 +11,17 @@ That commit adds dynamic multi-extruder discovery on top of upstream `developmen
 
 ## Build
 
-`docker compose build` clones the fork, checks out `EXPORTER_REF`, and builds the Go binary. To bump the version, either:
+`docker-compose build` clones the fork, checks out `EXPORTER_REF`, and builds the Go binary. To bump the version, either:
 
 - Edit `EXPORTER_REF` in `Dockerfile` to a new commit SHA, OR
-- Override at build time: `docker compose build --build-arg EXPORTER_REF=<sha>`
+- Override at build time: `docker-compose build --build-arg EXPORTER_REF=<sha>`
 
 Prefer SHAs over branch names for reproducibility.
 
 ## Deploy
 
     cd klipper-exporter
-    docker compose up -d --build
+    docker-compose up -d --build
 
 The container runs with `network_mode: host` and listens on `:9101`. Prometheus scrape config lives in `../prometheus/prometheus.yml`.
 

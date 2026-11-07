@@ -48,13 +48,13 @@ Derived from `grafana/`, `homebridge/`, `nginx/`:
    ```
 
 ## Out of scope / user handles
-- Create `/ext/actualbudget/` with appropriate ownership before `docker compose up`
+- Create `/ext/actualbudget/` with appropriate ownership before `docker-compose up`
 - DNS: ensure `budget.steenburg.net` resolves to the nginx host (internal via `dnsmasq` on `rpi-dns01`, external via public DNS)
 - TLS cert SAN: verify `/etc/letsencrypt/live/steenburg.net-0001/` cert covers `budget.steenburg.net`; if not, add it via certbot
 - Deploy order after files land:
-  1. `cd actual-budget && docker compose up -d`
-  2. Reload Authelia: `cd authelia && docker compose restart`
-  3. Reload nginx: `cd nginx && docker compose exec nginx nginx -s reload` (or `./reload-nginx-docker.sh`)
+  1. `cd actual-budget && docker-compose up -d`
+  2. Reload Authelia: `cd authelia && docker-compose restart`
+  3. Reload nginx: `cd nginx && docker-compose exec nginx nginx -s reload` (or `./reload-nginx-docker.sh`)
 
 ## Later / optional
 

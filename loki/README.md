@@ -53,7 +53,7 @@ sudo systemctl restart rsyslog
 
 ```bash
 cd ~/service-images/loki
-docker compose up -d
+docker-compose up -d
 ```
 
 ### 4. Start Loki and Alloy
@@ -62,7 +62,7 @@ Alloy runs as a container in this compose project alongside Loki.
 
 ```bash
 cd ~/service-images/loki
-docker compose up -d
+docker-compose up -d
 ```
 
 ## Verify

@@ -10,7 +10,7 @@ Home network infrastructure. One docker-compose project per subdirectory, deploy
 
 ## Service directories
 
-Each is a `docker compose` project unless noted. Deploy with `cd <dir> && docker compose up -d`.
+Each is a `docker-compose` project unless noted. Deploy with `cd <dir> && docker-compose up -d`.
 
 - `loki/` — Loki + containerized Alloy (SNMP scrape of all 7 Mikrotiks, syslog listener on 1514, journal reader, docker log scraper). Primary observability hub on n100d.
 - `alloy/` — **bare-metal Alloy** installer (`install.sh`) + shared template config; used on rpi-dns01 (not currently on n100d — see migration note below)
@@ -43,7 +43,7 @@ Each is a `docker compose` project unless noted. Deploy with `cd <dir> && docker
 
 ## Conventions
 
-- **Container redeploy after config change**: `docker compose up -d` from the service's directory — do NOT `docker restart <name>`, it misses volume/env edits.
+- **Container redeploy after config change**: `docker-compose up -d` from the service's directory — do NOT `docker restart <name>`, it misses volume/env edits.
 - **Logging**: all n100d containers log via the Docker `syslog` driver to `udp://n100d:514`. New services should copy the `logging:` block from an existing `docker-compose.yml` — don't introduce `json-file` services.
 - **Secrets**: use docker-compose `secrets:` (file-based), not `.env`. Established for Mikrotik creds; follow the same pattern for new services.
 - **Static DHCP + DNS entries**: belong in `dnsmasq/` (then commit + sync to rpi-dns01). Avoid adding DNS aliases for hosts with dynamic IPs — the alias goes stale (see 2cbdc7a, lutron-blinds revert).

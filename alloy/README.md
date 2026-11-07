@@ -40,7 +40,7 @@ sudo cp loki/snmp_localbuild.yml /etc/alloy/snmp_localbuild.yml
 Then take down the docker-based alloy (now replaced):
 
 ```bash
-cd loki && docker compose up -d
+cd loki && docker-compose up -d
 ```
 
 ## What install.sh does

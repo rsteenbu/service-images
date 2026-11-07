@@ -7,21 +7,21 @@ run and the expected result. Run from the service-images repo root unless noted.
 
 ### 1.1 Image is the official one
 ```
-docker compose -f actual-budget/docker-compose.yml config | grep image:
+docker-compose -f actual-budget/docker-compose.yml config | grep image:
 ```
 Expect: `image: docker.io/actualbudget/actual-server:latest`
 
 ### 1.2 Container starts and stays up
 ```
-cd actual-budget && docker compose up -d
+cd actual-budget && docker-compose up -d
 sleep 30
-docker compose ps
+docker-compose ps
 ```
 Expect: `actual_server` with status `Up` and health `healthy`.
 
 ### 1.3 Healthcheck is wired up
 ```
-docker inspect --format '{{json .State.Health}}' $(docker compose -f actual-budget/docker-compose.yml ps -q) | jq
+docker inspect --format '{{json .State.Health}}' $(docker-compose -f actual-budget/docker-compose.yml ps -q) | jq
 ```
 Expect: `Status: "healthy"`, and `Log[0].Output` from `node src/scripts/health-check.js`.
 
@@ -35,19 +35,19 @@ Expect: `200` (or a redirect — any 2xx/3xx proves the server bound to the port
 
 ### 2.1 Host networking (no port mapping needed)
 ```
-docker inspect --format '{{.HostConfig.NetworkMode}}' $(docker compose -f actual-budget/docker-compose.yml ps -q)
+docker inspect --format '{{.HostConfig.NetworkMode}}' $(docker-compose -f actual-budget/docker-compose.yml ps -q)
 ```
 Expect: `host`.
 
 ### 2.2 Restart policy is `always`
 ```
-docker inspect --format '{{.HostConfig.RestartPolicy.Name}}' $(docker compose -f actual-budget/docker-compose.yml ps -q)
+docker inspect --format '{{.HostConfig.RestartPolicy.Name}}' $(docker-compose -f actual-budget/docker-compose.yml ps -q)
 ```
 Expect: `always`.
 
 ### 2.3 Syslog driver pointed at n100d
 ```
-docker inspect --format '{{.HostConfig.LogConfig}}' $(docker compose -f actual-budget/docker-compose.yml ps -q)
+docker inspect --format '{{.HostConfig.LogConfig}}' $(docker-compose -f actual-budget/docker-compose.yml ps -q)
 ```
 Expect: driver `syslog`, config includes `syslog-address: udp://n100d:514` and `tag: actual-budget`.
 
@@ -61,9 +61,9 @@ Expect: recent lines from container startup (give it ~1 min after `up -d`).
 ### 2.5 Docker JSON log file is NOT in use
 With the syslog driver active, Docker's local JSON log should stay empty.
 ```
-docker inspect --format '{{.LogPath}}' $(docker compose -f actual-budget/docker-compose.yml ps -q)
+docker inspect --format '{{.LogPath}}' $(docker-compose -f actual-budget/docker-compose.yml ps -q)
 # then as root/sudo on the docker host:
-sudo wc -c "$(docker inspect --format '{{.LogPath}}' $(docker compose -f actual-budget/docker-compose.yml ps -q))"
+sudo wc -c "$(docker inspect --format '{{.LogPath}}' $(docker-compose -f actual-budget/docker-compose.yml ps -q))"
 ```
 Expect: file size `0` (or very small). If it's growing, the syslog driver isn't
 actually attached and logs are falling back to the default json-file driver.
@@ -71,7 +71,7 @@ Note: `docker logs <container>` will NOT work with the syslog driver — that's
 expected, not a bug.
 
 ### 2.6 n100d is receiving the syslog UDP packets
-Trigger some noise (`docker compose restart` the container) then on `n100d`:
+Trigger some noise (`docker-compose restart` the container) then on `n100d`:
 ```
 sudo tcpdump -ni any -A 'udp port 514' | grep -i actual-budget
 ```
@@ -108,7 +108,7 @@ already applied to dnsmasq.
 
 ### 2.9 Log continuity across container restart
 ```
-docker compose -f actual-budget/docker-compose.yml restart
+docker-compose -f actual-budget/docker-compose.yml restart
 ```
 In Grafana, query the last 10 minutes:
 ```
@@ -129,7 +129,7 @@ token or password shows up, redact at the Alloy stage before it hits Loki.
 
 ### 3.1 Bind mount is `/ext/actualbudget` → `/data`
 ```
-docker inspect --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{"\n"}}{{end}}' $(docker compose -f actual-budget/docker-compose.yml ps -q)
+docker inspect --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{"\n"}}{{end}}' $(docker-compose -f actual-budget/docker-compose.yml ps -q)
 ```
 Expect: a line `/ext/actualbudget -> /data`.
 
@@ -141,7 +141,7 @@ Expect: directory exists and contains Actual's state files (`server-files/`, `us
 
 ### 3.3 Data survives a restart
 1. Create a test budget via the web UI, add one transaction.
-2. `docker compose -f actual-budget/docker-compose.yml restart`
+2. `docker-compose -f actual-budget/docker-compose.yml restart`
 3. Reload the browser.
 Expect: budget and transaction still present.
 
@@ -149,7 +149,7 @@ Expect: budget and transaction still present.
 
 ### 4.1 Nginx config parses
 ```
-docker compose -f nginx/docker-compose.yml exec nginx nginx -t
+docker-compose -f nginx/docker-compose.yml exec nginx nginx -t
 ```
 Expect: `syntax is ok` and `test is successful`.
 
@@ -221,15 +221,15 @@ Expect: fullscreen Actual UI, offline-capable after first load.
 
 ### 7.1 Nginx reload picks up the new site
 ```
-cd nginx && docker compose exec nginx nginx -s reload
-docker compose logs --tail=20 nginx
+cd nginx && docker-compose exec nginx nginx -s reload
+docker-compose logs --tail=20 nginx
 ```
 Expect: no error lines; `budget.steenburg.net` serves normally after reload.
 
 ### 7.2 Authelia restart picks up new rules
 ```
-cd authelia && docker compose restart
-docker compose logs --tail=50 authelia | grep -i "budget\|rule\|error"
+cd authelia && docker-compose restart
+docker-compose logs --tail=50 authelia | grep -i "budget\|rule\|error"
 ```
 Expect: no errors; config load log shows the new domain.
 
