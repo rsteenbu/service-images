@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  klipper-exporter:
+    build: .
+    image: klipper-exporter:local
+    container_name: klipper-exporter
+    network_mode: host
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:514"
+        tag: "klipper-exporter"
+    command:
+      - -web.listen-address=:9101

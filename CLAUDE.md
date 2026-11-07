@@ -20,7 +20,7 @@ Each is a `docker compose` project unless noted. Deploy with `cd <dir> && docker
 - `nginx/` — reverse proxy; vhosts in `sites-enabled/`. Certbot renewal fires `nginx/reload-nginx-docker.sh` to reload the container.
 - `authelia/` — auth gateway in front of nginx (see Auth section)
 - `homebridge/` — HomeKit bridge; `control_network_access.py` toggles Mikrotik firewall rules via creds in docker-compose secrets
-- `klipper-exporter/` — custom Prometheus exporter for the Voron. **Not tracked in git** (directory exists locally but was never committed). Confirm intent before changing.
+- `klipper-exporter/` — custom Prometheus exporter for the Voron. `Dockerfile` clones our fork at a pinned SHA (see `klipper-exporter/README.md`). Exporter source is NOT in this repo — iterate in a separate clone of `github.com/rsteenbu/prometheus-klipper-exporter`, then bump `EXPORTER_REF`.
 - `route53/` — `update.sh` runs hourly via `rsteenbu`'s cron on n100d; UPSERTs `home.steenburg.net` A record in Route53 (zone `Z3LL68C7O2MBKT`) to the ISP's dynamic public IP. External half of the auth/split-DNS story.
 - `dnsmasq/setup/rpi-dns01-vlans.sh` — one-time `nmcli` bootstrap to create VLAN 10/20/30/40/50 interfaces on rpi-dns01 so dnsmasq can bind each subnet (.5 on each). Not idempotent — re-bootstrap requires deleting existing nmcli connections first.
 - Others: `actual-budget/`, `mongodb/`, `postfix/` (Gmail relay), `sftp/` (Mikrotik config backup target, replaced vsftpd)
