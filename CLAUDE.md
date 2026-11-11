@@ -15,7 +15,7 @@ Each is a `docker-compose` project unless noted. Deploy with `cd <dir> && docker
 - `loki/` — Loki + containerized Alloy (SNMP scrape of all 7 Mikrotiks, syslog listener on 1514, journal reader, docker log scraper). Primary observability hub on n100d.
 - `alloy/` — **bare-metal Alloy** installer (`install.sh`) + shared template config; used on rpi-dns01 (not currently on n100d — see migration note below)
 - `prometheus/`, `grafana/` — metrics + dashboards. Dashboards are provisioned from `grafana/provisioning/dashboards/` (hot-reloaded every 30s). Datasource UIDs: Prometheus `admcgbr6g84cgf`, Loki `edqunhtg56n7ka`.
-- `dnsmasq/` — config for rpi-dns01 (**not run locally**); authoritative for `steenburg.net`; holds static DHCP entries and split-DNS A records (see Auth section)
+- `dnsmasq/` — config for rpi-dns01 (**not run locally**); authoritative for `steenburg.net`; holds static DHCP entries and split-DNS A records (see Auth section). Includes an **autoheal sidecar** (`willfarrell/autoheal`) that restarts dnsmasq when its healthcheck flips to `unhealthy` — dnsmasq is labeled `autoheal=true`.
 - `rsyslog/` — host rsyslog drop-ins **symlinked into `/etc/rsyslog.d/`** (not a container). Receives container syslog on `udp://n100d:514`.
 - `nginx/` — reverse proxy; vhosts in `sites-enabled/`. Certbot renewal fires `nginx/reload-nginx-docker.sh` to reload the container.
 - `authelia/` — auth gateway in front of nginx (see Auth section)
@@ -54,7 +54,7 @@ Each is a `docker-compose` project unless noted. Deploy with `cd <dir> && docker
 - **dnsmasq severity=error**: Docker's syslog driver forces stderr → `LOG_ERR`. A `stage.match` in `loki/alloy-config.alloy` under `loki.process "syslog"` overrides severity to `info` for `application="dnsmasq"`. **Must stay first** in that pipeline. See [[project_dnsmasq_severity]].
 - **Loki DHCP label split (2026-05-23 22:00)**: old = `application="dnsmasq-dhcp"`, new = `dnsmasq_service="dhcp"`. For historical ranges, union both. See [[feedback_loki_dhcp_label]].
 - **Alloy journal relabeling**: `relabel_rules = …` must sit inside `loki.source.journal` (labels are stripped before `forward_to`); journal fields drop their leading underscore (`__journal_systemd_unit`, not `__journal__systemd_unit`). See [[feedback_alloy_journal_relabeling]].
-- **dnsmasq healthcheck**: container has a healthcheck to recover from upstream deadlock (fbed73f) — don't strip it.
+- **dnsmasq self-heal**: healthcheck (`nslookup home.steenburg.net 127.0.0.1`) only **detects** upstream deadlock; it does not recover on its own. Recovery is done by the `autoheal` sidecar in `dnsmasq/docker-compose.yml`, which restarts any container labeled `autoheal=true` when Docker flips it to `unhealthy`. Don't strip either half (fbed73f added the healthcheck; the sidecar was added after a 2026-11-10 outage where dnsmasq stayed hung for ~13 min with no recovery).
 - **Mikrotik config backups**: `/home/ftp-files/<device>-<YYYYMMDD>.rsc`, owned by `ftp-files`; may need `sudo` to read. See [[reference_mikrotik_backups]].
 
 ## In flight

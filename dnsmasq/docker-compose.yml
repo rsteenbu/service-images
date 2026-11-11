@@ -10,6 +10,8 @@ services:
     cap_add:
       - NET_ADMIN
     restart: always
+    labels:
+      - autoheal=true
     healthcheck:
       test: ["CMD-SHELL", "nslookup home.steenburg.net 127.0.0.1 > /dev/null 2>&1"]
       interval: 30s
@@ -27,3 +29,19 @@ services:
       - ./dnsmasq.leases:/var/lib/misc/dnsmasq.leases
       - ./hosts:/etc/hosts
       - /var/tftpd:/var/tftpd
+
+  autoheal:
+    image: willfarrell/autoheal
+    container_name: autoheal
+    restart: always
+    environment:
+      AUTOHEAL_CONTAINER_LABEL: "autoheal"
+      AUTOHEAL_INTERVAL: "10"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://n100d:1514"
+        syslog-format: "rfc5424"
+        tag: "autoheal"
