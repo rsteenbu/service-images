@@ -36,7 +36,7 @@ Each is a `docker-compose` project unless noted. Deploy with `cd <dir> && docker
 
 ## Observability (local to n100d)
 
-- Loki: `http://localhost:3100` — `logcli --since=Nm '…'` or `curl /loki/api/v1/query_range`
+- Loki: `http://localhost:3100` — `logcli query '…' --since=Nm` or `curl /loki/api/v1/query_range`
 - Prometheus: `http://localhost:9090`
 - **PromQL for Mikrotik**: filter `job=~"integrations/snmp/mikro.*"` + `device="mikro-<name>"`.
 - **WiFi client data**: always query `device="mikro-router"` — CAPsMAN centralizes it; `mtxrWlApClientCount` is 0 on managed APs.
