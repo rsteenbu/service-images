@@ -1,0 +1,17 @@
+services:
+  webui:
+    image: ghcr.io/open-webui/open-webui:v0.13.4   # ← paste the tag you just fetched
+    container_name: webui
+    ports:
+      - "127.0.0.1:3001:8080"
+    environment:
+      OLLAMA_BASE_URL: "http://192.168.1.10:11434"
+      WEBUI_AUTH: "false"
+    volumes:
+      - /ext/webui-data:/app/backend/data
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:514"
+        tag: "webui"
