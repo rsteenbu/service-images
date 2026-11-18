@@ -63,4 +63,12 @@ scrape_configs:
       - target_label: __address__
         replacement: localhost:9101
 
+  - job_name: local-ai
+    static_configs:
+      - targets: ['192.168.1.10:9100']
+        labels:
+          host: macmini
+          role: ai
+
+
 
