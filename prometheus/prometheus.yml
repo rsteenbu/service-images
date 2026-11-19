@@ -67,7 +67,7 @@ scrape_configs:
     static_configs:
       - targets: ['192.168.1.10:9100']
         labels:
-          host: macmini
+          hostname: macmini
           role: ai
 
 
