@@ -62,3 +62,10 @@ access_control:
       policy: bypass
     - domain: budget.steenburg.net
       policy: one_factor
+    - domain: webui.steenburg.net
+      policy: bypass
+      networks:
+        - internal
+    - domain: webui.steenburg.net
+      policy: one_factor
+      
