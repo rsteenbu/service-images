@@ -1,0 +1,32 @@
+# Actual Budget — Authelia auth for external, bypass for internal
+server {
+    listen 443 ssl;
+    server_name mcp-actual.steenburg.net;
+
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+     # No Authelia include — this endpoint is bearer-only.
+     # Only allow from home VLAN; external callers get dropped.
+     allow 192.168.0.0/16;
+     deny all;
+
+    client_max_body_size 20M;
+
+    location / {
+        proxy_pass http://localhost:3310;
+        proxy_http_version 1.1;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # SSE / streaming — never buffer; keep the connection alive
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 86400;
+
+        # Preserve the Authorization header the client sends
+        proxy_set_header Authorization $http_authorization;
+    }
+}
