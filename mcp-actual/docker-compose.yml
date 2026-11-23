@@ -1,0 +1,25 @@
+services:
+  actual-mcp:
+    build: .
+    image: local/actual-mcp:1.15.1   # local tag for the built image
+    container_name: actual-mcp
+    restart: always
+    ports:
+      - "127.0.0.1:3310:3310"
+    environment:
+      ACTUAL_SERVER_URL: "http://192.168.1.12:5006"
+      ACTUAL_BUDGET_SYNC_ID: "ec4f9726-b512-4f4e-abf5-99cce0211c6f"
+      ACTUAL_SYNC_TTL_MS: "60000"
+      ACTUAL_VERBOSE: "false"           # suppress the stdout noise (see config §4)
+    env_file:
+      - secrets.env
+    command:
+      - --sse
+      - --port=3310
+      - --enable-bearer
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://n100d:514"
+        tag: "mcp-actual"
+
